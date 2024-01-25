@@ -34,14 +34,11 @@ class Marks(commands.Cog):
 
             emoji_lists = [relax_emoji, pom_emoji, fire_emoji, check_emoji]
             if any(any(r in ctx.content for r in emoji_list) for emoji_list in emoji_lists):
-                await ctx.channel.send('Вижу отметки')
                 user_id = f'<@{ctx.author.id}>'
-                await ctx.channel.send(user_id)
                 msg_split = ctx.content.split()
                 resalt = ["Записала "]
                 db = TinyDB('./json/database.json', encoding='utf-8')
                 user_info = db.search(User.user_id == user_id)
-                await ctx.channel.send(f"{user_info} - инфа пользователя")
                 categories = []
                 categories_id = []
                 # Добавляем названия категорий если есть
@@ -51,7 +48,6 @@ class Marks(commands.Cog):
                         category_values = category_value.split(" ")
                         categories_id.append(category_key)
                         categories.append(category_values[0])
-                await ctx.channel.send(f"{categories} - категории пользователя")
                 # 1) ПРОВЕРКА КАТЕГОРИИ
                 category_name = "Null"
                 if categories != []:
@@ -76,7 +72,6 @@ class Marks(commands.Cog):
                     if element in (relax_emoji):
                         resalt.append(f"{int(msg_split[index - 1])} {element} ")
                         num_relax = int(msg_split[index - 1])
-                await ctx.channel.send(f"{num_pom} {num_check} {num_fire} {num_relax}")
                 # 3) ОПРЕДЕЛЕНИЕ ЧИСЛА
                 try:
                     msg = ctx.content.split(" за ")
@@ -106,7 +101,6 @@ class Marks(commands.Cog):
                         sign_date = f"{day} {month_names[month]} {year}"           
                 except Exception as e:
                     await ctx.channel.send(f"somethong wrong: {e}")
-                await ctx.channel.send(f"{sign_date}")
                 # 4) ЗАПИСЬ ОТМЕТОК в БД
                 mdb = TinyDB('./json/marksdb.json', encoding='utf-8')
                 mdb.insert({"user_id": user_id,
@@ -126,7 +120,7 @@ class Marks(commands.Cog):
 
                 user_exp = int(num_pom + num_check + num_fire + (num_relax*0.2) + user_exp)
                 
-                if user_exp >= user_max_exp: # если достиг нового уровня
+                while user_exp >= user_max_exp: # если достиг нового уровня
                     user_exp -= user_max_exp
                     user_max_exp *= 1.15
                     user_lvl += 1 

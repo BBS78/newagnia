@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from tinydb import TinyDB, Query
 from easy_pil import Canvas, Editor, Font, load_image_async
+from cogs.Inventory import inventory_info
 
 # ТЕКУЩИЕ ОЧКИ
 def current_userdata(user_id, k):
@@ -10,6 +11,40 @@ def current_userdata(user_id, k):
     User = Query()
     resalts = db.search(User.user_id == user_id)
     return resalts[0][k]
+
+# Кнопки
+class Buttons(discord.ui.View):
+    def __init__(self, user_id, ctx):
+        super().__init__(timeout=None)
+        self.user_id = user_id
+        self.ctx = ctx
+
+    @discord.ui.button(label="[1] Инвентарь", style=discord.ButtonStyle.blurple)
+    async def inventory(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        try:
+            user_id = f"<@{interaction.user.id}>"
+            username = str(interaction.user.display_name)
+            i_info = await inventory_info(self.ctx, user_id, username)  
+
+            await interaction.response.send_message(file=i_info[0], embed=i_info[1])  
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
+    @discord.ui.button(label="[2] Питомцы", style=discord.ButtonStyle.blurple)
+    async def pets(self, interaction: discord.Interaction, Button: discord.ui.Button):
+        try:
+            pass
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+
+    @discord.ui.button(label="[3] Достижения", style=discord.ButtonStyle.blurple)
+    async def achievements(self, interaction: discord.Interaction, Button: discord.ui.Button):     
+        try:
+            pass
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 async def profile_info(ctx, user_id):
     try:
@@ -83,7 +118,7 @@ async def profile_info(ctx, user_id):
         )    
 
         embed.set_image(url=f"attachment://profile_image_{user_id_for_filename}.png")
-        await ctx.send(file=file, embed=embed)
+        await ctx.send(file=file, embed=embed, view=Buttons(user_id, ctx))
 
         if userdata['user_class'] == "Класс не выбран":
             embed = discord.Embed(
@@ -123,10 +158,11 @@ class Profile(commands.Cog):
                         "max_exp": 100, # Опыт до следующего уровня
                         "health": 10, # Текущее здоровье
                         "max_health": 10, # Максимальное здоровье
-                            "coins": 0, # Монеты пользователя
-                            "01": "None",
-                            "02": "None",
-                            "03": "None"  
+                        "coins": 0, # Монеты пользователя
+                        "01": "None",
+                        "02": "None",
+                        "03": "None",
+                        "inventary": [] 
                             })    
             await profile_info(ctx, user_id)
         except Exception as e:

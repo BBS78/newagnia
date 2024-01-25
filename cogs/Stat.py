@@ -24,7 +24,10 @@ async def statistic_info(ctx, user_id, username):
         font_39 = Font("patterns/Jost-Medium.ttf", size=39)
         x = 158
         y = 257
-        space = 100
+        space = 80
+        linesize = (font_39.getsize(f"{all_pom}")[0]) + (font_39.getsize(f"{all_check}")[0]) + (font_39.getsize(f"{all_fire}")[0]) + (font_39.getsize(f"{all_relax}")[0]) + space*3
+        if linesize >= 550: 
+            space = 60
         background.text((x, y), all_pom, font=font_39, color="white")
         x = x + (font_39.getsize(f"{all_pom}")[0])+space
         background.paste(tomato, (x-space-4, y-10))
