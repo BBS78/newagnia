@@ -24,7 +24,7 @@ db = TinyDB('./json/database.json', encoding='utf-8')
 User = Query()
 
 # Префикс бота
-client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
+client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 client.remove_command('help')
 # Статусы бота
 def read_bot_status():

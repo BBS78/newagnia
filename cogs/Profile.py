@@ -71,7 +71,7 @@ async def profile_info(ctx, user_id):
         background.text((600, 230), f"{userdata['exp']}/{userdata['max_exp']} EXP", font=font_18, color="white")
 
         background.text((63, 280), f"Последние достижения", font=font_30_bold, color="white")
-        background.text((63, 330), "{В разработке}", font=font_30_bold, color="#888888")
+        background.text((63, 330), "{Нет достижений}", font=font_30_bold, color="#888888")
         user_id_for_filename = str(user_id).replace("<", "").replace(">", "").replace("@", "")
         file_path = f'images/profile_image_{user_id_for_filename}.png' 
         background.save(file_path) 
