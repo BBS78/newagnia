@@ -23,30 +23,30 @@ class Test(commands.Cog):
         try:
             user_id = f"<@{ctx.author.id}>"
             inventory = current_userdata(user_id, "inventory")
-            if arg == "id01":
-                name = "Серебряное кольцо с аквамарином"
-                points = "+5% силы"
-            elif arg == "id02":
-                name = "Серебряное кольцо с рубином"
-                points = "+5% здоровья"
-            elif arg == "id03":
-                name = "Золотой медальон"
-                points = "+3% золота"
-            elif arg == "id04":
-                name = "Филактерия"
-                points = "+10% силы"
-            elif arg == "id05":
-                name = "Бронзовое кольцо с аметистом"
-                points = "+3% защиты"
-            elif arg == "id06":
-                name = "Амулет Клыка"
-                points = "+2% силы"
-            item = {"item_id": arg, "name": name, "points": points}
-            inventory.append(item)
-            db.update({"inventory": inventory}, User.user_id == user_id)
-            inventory = current_userdata(user_id, "inventory")
-            await ctx.send(f'Добавлен предмет "{name}"')
-            await ctx.send(f'Инвентарь "{inventory}"')
+            item_mapping = {
+                "id01": {"name": "Серебряное кольцо с аквамарином", "points": "+5% опыта"},
+                "id02": {"name": "Серебряное кольцо с рубином", "points": "+5% здоровья"},
+                "id03": {"name": "Золотой медальон", "points": "+3% золота"},
+                "id04": {"name": "Филактерия", "points": "+10% силы"},
+                "id05": {"name": "Бронзовое кольцо с аметистом", "points": "+3% защиты"},
+                "id06": {"name": "Амулет Клыка", "points": "+2% силы"},
+                "id07": {"name": "Клинок гильдии", "points": "+20% силы"},
+                "id08": {"name": "Кожаный тардж", "points": "+20% защиты"},
+                "id09": {"name": "Шитая одежда", "points": "+15% защиты"},
+                "id10": {"name": "Капюшон", "points": "+10% защиты"},
+                "id11": {"name": "Кинжал обыкновенный", "points": "+10% силы"},
+            }
+
+            if arg in item_mapping:
+                item_info = item_mapping[arg]
+                item = {"item_id": arg, "name": item_info["name"], "points": item_info["points"]}
+                inventory.append(item)
+                db.update({"inventory": inventory}, User.user_id == user_id)
+                inventory = current_userdata(user_id, "inventory")
+                await ctx.send(f'Добавлен предмет "{item_info["name"]}"')
+                await ctx.send(f'Инвентарь "{inventory}"')
+            else:
+                await ctx.send(f'Неизвестный айди')
         except Exception as e:
             await ctx.send(f"An error occurred in test: {e}")
 

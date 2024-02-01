@@ -54,30 +54,38 @@ async def inventory_info(ctx, user_id, username):
         x_text = 62
         y_text = 267
         y_text_bottom = 289
-        counter = 10
+        counter = 15
         for i in userdata["inventory"]:
             item_pic = Editor(f'images/items/{i["item_id"]}.png')
+            background.rectangle((x, y), width=60, height=60, fill="#23272A")
             background.paste(item_pic, (x, y))
 
             # Текст
             text = i["points"].split(" ")
-            text_size = (font_22.getsize(text[0]))[0]
-            x_position = (45-(text_size/2)) + x_text
+            text_size = (font_22.getsize(text[0]))
+            x_position = (45-(text_size[0]/2)) + x_text
+            background.rectangle((x_position-10, y_text), width=90, height=50, fill="#313437")
             background.text((x_position, y_text), text[0], font=font_22, color="#FFB043")
 
-            text_size = (font_22.getsize(text[1]))[0]
-            x_position = (45-(text_size/2)) + x_text
+            text_size = (font_22.getsize(text[1]))
+            x_position = (45-(text_size[0]/2)) + x_text
             background.text((x_position, y_text_bottom), text[1], font=font_22, color="white")
             
             counter -= 1
             x += 135
             x_text += 135
-            if counter == 5:
+            if counter == 10:
                 x = 77
                 y = 340  
                 x_text = 62
                 y_text = 425
-                y_text_bottom = 447           
+                y_text_bottom = 447  
+            elif counter == 10: 
+                x = 77
+                y = 500 
+                x_text = 62  
+                y_text = 580    
+                y_text_bottom = 602   
 
         user_id_for_filename = str(user_id).replace("<", "").replace(">", "").replace("@", "")
         file_path = f'images/inventory_image_{user_id_for_filename}.png' 
