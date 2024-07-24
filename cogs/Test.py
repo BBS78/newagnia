@@ -1,8 +1,10 @@
 import discord
 from discord.ext import commands
 from tinydb import TinyDB, Query
-from easy_pil import Canvas, Editor, Font, load_image_async
-from cogs.Profile import current_userdata
+from easy_pil import Font
+import requests
+import pandas as pd
+
 
 # БД бота
 db = TinyDB('./json/database.json', encoding='utf-8')
@@ -19,36 +21,17 @@ class Test(commands.Cog):
 
     # Команда
     @commands.command(aliases=['t'])
-    async def test(self, ctx, arg):
+    async def test(self, ctx, *args):
         try:
-            user_id = f"<@{ctx.author.id}>"
-            inventory = current_userdata(user_id, "inventory")
-            item_mapping = {
-                "id01": {"name": "Серебряное кольцо с аквамарином", "points": "+5% опыта"},
-                "id02": {"name": "Серебряное кольцо с рубином", "points": "+5% здоровья"},
-                "id03": {"name": "Золотой медальон", "points": "+3% золота"},
-                "id04": {"name": "Филактерия", "points": "+10% силы"},
-                "id05": {"name": "Бронзовое кольцо с аметистом", "points": "+3% защиты"},
-                "id06": {"name": "Амулет Клыка", "points": "+2% силы"},
-                "id07": {"name": "Клинок гильдии", "points": "+20% силы"},
-                "id08": {"name": "Кожаный тардж", "points": "+20% защиты"},
-                "id09": {"name": "Шитая одежда", "points": "+15% защиты"},
-                "id10": {"name": "Капюшон", "points": "+10% защиты"},
-                "id11": {"name": "Кинжал обыкновенный", "points": "+10% силы"},
-            }
+            url = 'https://docs.google.com/spreadsheets/d/1OKJR2xuqr2Cp8CRlkfXWBSx8zY8I5m9bn77LpbICLnQ/edit?usp=sharing'  # Replace with your Google Sheets link
+            html = requests.get(url).content
+            df_list = pd.read_html(html)
+            df = df_list[-1]  # Assuming the relevant table is the last one
+            df.to_csv('my_data.csv')  # Save the data to a CSV file
 
-            if arg in item_mapping:
-                item_info = item_mapping[arg]
-                item = {"item_id": arg, "name": item_info["name"], "points": item_info["points"]}
-                inventory.append(item)
-                db.update({"inventory": inventory}, User.user_id == user_id)
-                inventory = current_userdata(user_id, "inventory")
-                await ctx.send(f'Добавлен предмет "{item_info["name"]}"')
-                await ctx.send(f'Инвентарь "{inventory}"')
-            else:
-                await ctx.send(f'Неизвестный айди')
+            # await ctx.send(data[0])
         except Exception as e:
-            await ctx.send(f"An error occurred in test: {e}")
+            await print(f'{e}')
 
         
 

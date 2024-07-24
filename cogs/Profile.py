@@ -46,6 +46,59 @@ class Buttons(discord.ui.View):
         except Exception as e:
             print(f"An error occurred: {e}")
 
+
+async def profile_lvl(self, ctx, user_id):
+    try:
+        db = TinyDB('./json/database.json', encoding='utf-8')
+        User = Query()
+        username = current_userdata(user_id, "username")
+        user_lvl = current_userdata(user_id, "lvl")
+        user_exp = current_userdata(user_id, "exp")
+        user_max_exp = current_userdata(user_id, "max_exp")
+        user_coins = current_userdata(user_id, "coins")
+        user_class = current_userdata(user_id, "user_class")
+        user_skills = current_userdata(user_id, "skills")
+
+        if user_exp >= user_max_exp:
+            user_exp = user_max_exp - user_exp
+            user_lvl += 1
+            user_max_exp = 5 * (user_lvl ^ 2) + (50 * user_lvl) + 100
+            user_coins += user_lvl*2
+
+            message_text = [f'Персонаж **{username}** ({user_id}) поднялся(лась) на {user_lvl} уровень!']
+
+            if user_class == 'Воин' and user_lvl == 1 and '1.1' not in user_skills:
+                message_text.append(f'\n\nВы разблокировали новую способность - **Огненный меч**\nИспользуйте `!skills` для подробной информации')
+                message_text = " ".join(message_text)
+                user_skills.append('1.1')
+            if user_class == 'Маг' and user_lvl == 1 and '1.2' not in user_skills:
+                message_text.append(f'\n\nВы разблокировали новую способность - **Вспышка**\nИспользуйте `!skills` для подробной информации')
+                message_text = " ".join(message_text)
+                user_skills.append('1.2')
+            if user_class == 'Разбойник' and user_lvl == 1 and '1.3' not in user_skills:
+                message_text.append(f'\n\nВы разблокировали новую способность - **Удар в спину**\nИспользуйте `!skills` для подробной информации')
+                message_text = " ".join(message_text)
+                user_skills.append('1.3')
+
+            db.update({"exp": int(user_exp)}, User.user_id == user_id)
+            db.update({"lvl": int(user_lvl)}, User.user_id == user_id)
+            db.update({"max_exp": int(user_max_exp)}, User.user_id == user_id)
+            db.update({"coins": int(user_coins)}, User.user_id == user_id)
+            db.update({"skills": user_skills}, User.user_id == user_id)
+
+            
+
+            text_channel = self.client.get_channel(675993483948982272)
+            await text_channel.send(message_text)
+        else:
+            return
+
+
+
+    except Exception as e:
+        print(f"An error occurred in profile_lvl: {e}")
+
+
 async def profile_info(ctx, user_id):
     try:
         # Получаем инфу
@@ -111,6 +164,7 @@ async def profile_info(ctx, user_id):
         file_path = f'images/profile_image_{user_id_for_filename}.png' 
         background.save(file_path) 
         file = discord.File(file_path, filename=f"profile_image_{user_id_for_filename}.png")
+        
         embed = discord.Embed(
             title='⚔️ Профиль пользователя',
             description='',
@@ -162,7 +216,8 @@ class Profile(commands.Cog):
                         "01": "None",
                         "02": "None",
                         "03": "None",
-                        "inventary": [] 
+                        "inventary": [],
+                        "achievements": []  
                             })    
             await profile_info(ctx, user_id)
         except Exception as e:

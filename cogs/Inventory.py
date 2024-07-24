@@ -103,7 +103,7 @@ async def inventory_info(ctx, user_id, username):
         return file, embed
 
     except Exception as e:
-        await ctx.send(f"An error occurred in the inventory_info: {e}")
+        print(f"An error occurred in the inventory_info: {e}")
 
 
 # Класс команды
@@ -116,7 +116,7 @@ class Inventory(commands.Cog):
         print("Inventory.py is ready")
 
     # Команда
-    @commands.command(aliases=['i'])
+    @commands.command(aliases=['inv'])
     async def inventory(self, ctx):
         try:
             user_id = f"<@{ctx.author.id}>"
@@ -125,7 +125,8 @@ class Inventory(commands.Cog):
 
             await ctx.send(file=i_info[0], embed=i_info[1])       
         except Exception as e:
-            await ctx.send(f"An error occurred in the inventory command: {e}")        
+            await ctx.send(f"У других не работает, а у тебя значит должно заработать?")    
+            print(f"Инвентарь: {e}")    
 
         
 
